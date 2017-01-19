@@ -2,9 +2,9 @@
 Google Maps - Headstart
 
 
-#0 - Introduction
+#0 - Geolocation: Displaying User or Device Position on Maps
 
-Based on 'Google Maps Javascript API' at https://www.youtube.com/watch?v=keO6egndYrE
+Based on 'Geolocation: Displaying User or Device Position on Maps' at https://www.youtube.com/watch?v=keO6egndYrE and https://developers.google.com/maps/documentation/javascript/geolocation
 
 #1 - Adding a Map with a Marker
 
