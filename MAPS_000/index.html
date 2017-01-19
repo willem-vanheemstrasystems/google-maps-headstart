@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Google Maps Javascript API</title>
+    <style type="text/css">
+        #map-canvas {
+            height: 500px;
+        }
+    </style>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("jquery", "1.7");
+    </script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgxyPVrsEQFzhkvFkszyrZzPJz7fOPQTg"></script>
+    <script type="text/javascript">
+      var map;
+
+      function initialize(location){
+          console.log(location);
+          var mapOptions = {
+              center: new google.maps.LatLng(location),
+              zoom: 8,
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+          }
+          map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+      }
+      $(document).ready(function(){
+          navigator.geolocation.getCurrentPosition(initialize);
+      });
+    </script>
+</head>
+
+<body>
+    <div id="map-canvas"></div>
+</body>
+
+</html>
