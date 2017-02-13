@@ -14,4 +14,7 @@ Based on 'Geolocation: Displaying User or Device Position on Maps' at https://ww
 
 Based on 'Marker Clustering' at https://developers.google.com/maps/documentation/javascript/marker-clustering
 
+#4 - Search
+
+Based on 'Search' at https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
 
