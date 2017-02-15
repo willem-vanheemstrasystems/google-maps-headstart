@@ -126,55 +126,57 @@
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
       function initAutocomplete() {
-        var mapOne = new google.maps.Map(document.getElementById('map-1'), {
+        var appOne = {};
+        var appTwo = {};
+        appOne.map = new google.maps.Map(document.getElementById('map-1'), {
           center: {lat: -33.8688, lng: 151.2195},
           zoom: 13,
           mapTypeId: 'roadmap'
         });
 
-        var mapTwo = new google.maps.Map(document.getElementById('map-2'), {
+        appTwo.map = new google.maps.Map(document.getElementById('map-2'), {
           center: {lat: -33.8688, lng: 151.2195},
           zoom: 13,
           mapTypeId: 'roadmap'
         });
 
         // Create the search box and link it to the UI element.
-        var inputOne = document.getElementById('pac-input-1');
-        var searchBoxOne = new google.maps.places.SearchBox(inputOne);
-        mapOne.controls[google.maps.ControlPosition.TOP_LEFT].push(inputOne);
+        appOne.input = document.getElementById('pac-input-1');
+        appOne.searchBox = new google.maps.places.SearchBox(appOne.input);
+        appOne.map.controls[google.maps.ControlPosition.TOP_LEFT].push(appOne.input);
 
-        var inputTwo = document.getElementById('pac-input-2');
-        var searchBoxTwo = new google.maps.places.SearchBox(inputTwo);
-        mapTwo.controls[google.maps.ControlPosition.TOP_LEFT].push(inputTwo);
+        appTwo.input = document.getElementById('pac-input-2');
+        appTwo.searchBox = new google.maps.places.SearchBox(appTwo.input);
+        appTwo.map.controls[google.maps.ControlPosition.TOP_LEFT].push(appTwo.input);
 
         // Bias the SearchBox results towards current map's viewport.
-        mapOne.addListener('bounds_changed', function() {
-          searchBoxOne.setBounds(mapOne.getBounds());
+        appOne.map.addListener('bounds_changed', function() {
+          appOne.searchBox.setBounds(appOne.map.getBounds());
         });
 
-        mapTwo.addListener('bounds_changed', function() {
-          searchBoxTwo.setBounds(mapTwo.getBounds());
+        appTwo.map.addListener('bounds_changed', function() {
+          appTwo.searchBox.setBounds(appTwo.map.getBounds());
         });
 
-        var markersOne = [];
-        var markersTwo = [];
+        appOne.markers = [];
+        appTwo.markers = [];
         // Listen for the event fired when the user selects a prediction and retrieve
         // more details for that place.
-        searchBoxOne.addListener('places_changed', function() {
-          var places = searchBoxOne.getPlaces();
+        appOne.searchBox.addListener('places_changed', function() {
+          var places = appOne.searchBox.getPlaces();
 
           if (places.length == 0) {
             return;
           }
 
           // Clear out the old markers.
-          markersOne.forEach(function(marker) {
+          appOne.markers.forEach(function(marker) {
             marker.setMap(null);
           });
-          markersOne = [];
+          appOne.markers = [];
 
           // For each place, get the icon, name and location.
-          var boundsOne = new google.maps.LatLngBounds();
+          appOne.bounds = new google.maps.LatLngBounds();
           places.forEach(function(place) {
             if (!place.geometry) {
               console.log("Returned place contains no geometry");
@@ -189,8 +191,8 @@
             };
 
             // Create a marker for each place.
-            markersOne.push(new google.maps.Marker({
-              map: mapOne,
+            appOne.markers.push(new google.maps.Marker({
+              map: appOne.map,
               icon: icon,
               title: place.name,
               position: place.geometry.location
@@ -198,29 +200,29 @@
 
             if (place.geometry.viewport) {
               // Only geocodes have viewport.
-              boundsOne.union(place.geometry.viewport);
+              appOne.bounds.union(place.geometry.viewport);
             } else {
-              boundsOne.extend(place.geometry.location);
+              appOne.bounds.extend(place.geometry.location);
             }
           });
-          mapOne.fitBounds(boundsOne);
+          appOne.map.fitBounds(appOne.bounds);
         });
 
-        searchBoxTwo.addListener('places_changed', function() {
-          var places = searchBoxTwo.getPlaces();
+        appTwo.searchBox.addListener('places_changed', function() {
+          var places = appTwo.searchBox.getPlaces();
 
           if (places.length == 0) {
             return;
           }
 
           // Clear out the old markers.
-          markersTwo.forEach(function(marker) {
+          appTwo.markers.forEach(function(marker) {
             marker.setMap(null);
           });
-          markersTwo = [];
+          appTwo.markers = [];
 
           // For each place, get the icon, name and location.
-          var boundsTwo = new google.maps.LatLngBounds();
+          appTwo.bounds = new google.maps.LatLngBounds();
           places.forEach(function(place) {
             if (!place.geometry) {
               console.log("Returned place contains no geometry");
@@ -235,8 +237,8 @@
             };
 
             // Create a marker for each place.
-            markersTwo.push(new google.maps.Marker({
-              map: mapTwo,
+            appTwo.markers.push(new google.maps.Marker({
+              map: appTwo.map,
               icon: icon,
               title: place.name,
               position: place.geometry.location
@@ -244,12 +246,12 @@
 
             if (place.geometry.viewport) {
               // Only geocodes have viewport.
-              boundsTwo.union(place.geometry.viewport);
+              appTwo.bounds.union(place.geometry.viewport);
             } else {
-              boundsTwo.extend(place.geometry.location);
+              appTwo.bounds.extend(place.geometry.location);
             }
           });
-          mapTwo.fitBounds(boundsTwo);
+          appTwo.map.fitBounds(appTwo.bounds);
         });
 
       }
