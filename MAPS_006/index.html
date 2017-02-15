@@ -126,134 +126,142 @@
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
       function initAutocomplete() {
-        var appOne = {};
-        var appTwo = {};
-        appOne.map = new google.maps.Map(document.getElementById('map-1'), {
-          center: {lat: -33.8688, lng: 151.2195},
-          zoom: 13,
-          mapTypeId: 'roadmap'
-        });
+        var apps = new Array(2); // two maps
+        apps[0] = [];
+        apps[1] = [];
 
-        appTwo.map = new google.maps.Map(document.getElementById('map-2'), {
-          center: {lat: -33.8688, lng: 151.2195},
-          zoom: 13,
-          mapTypeId: 'roadmap'
-        });
+        for(var i=0; i<apps.length; i++) {
 
-        // Create the search box and link it to the UI element.
-        appOne.input = document.getElementById('pac-input-1');
-        appOne.searchBox = new google.maps.places.SearchBox(appOne.input);
-        appOne.map.controls[google.maps.ControlPosition.TOP_LEFT].push(appOne.input);
+            var _self = window;
+            _self.apps = apps;
 
-        appTwo.input = document.getElementById('pac-input-2');
-        appTwo.searchBox = new google.maps.places.SearchBox(appTwo.input);
-        appTwo.map.controls[google.maps.ControlPosition.TOP_LEFT].push(appTwo.input);
+            _self.apps[i].map = new google.maps.Map(document.getElementById('map-'+ (i+1)), {
+                center: {lat: -33.8688, lng: 151.2195},
+                zoom: 13,
+                mapTypeId: 'roadmap'
+            });
 
-        // Bias the SearchBox results towards current map's viewport.
-        appOne.map.addListener('bounds_changed', function() {
-          appOne.searchBox.setBounds(appOne.map.getBounds());
-        });
-
-        appTwo.map.addListener('bounds_changed', function() {
-          appTwo.searchBox.setBounds(appTwo.map.getBounds());
-        });
-
-        appOne.markers = [];
-        appTwo.markers = [];
-        // Listen for the event fired when the user selects a prediction and retrieve
-        // more details for that place.
-        appOne.searchBox.addListener('places_changed', function() {
-          var places = appOne.searchBox.getPlaces();
-
-          if (places.length == 0) {
-            return;
-          }
-
-          // Clear out the old markers.
-          appOne.markers.forEach(function(marker) {
-            marker.setMap(null);
-          });
-          appOne.markers = [];
-
-          // For each place, get the icon, name and location.
-          appOne.bounds = new google.maps.LatLngBounds();
-          places.forEach(function(place) {
-            if (!place.geometry) {
-              console.log("Returned place contains no geometry");
-              return;
+            // Create the search box and link it to the UI element.
+            _self.apps[i].input = document.getElementById('pac-input-'+ (i+1));
+            _self.apps[i].searchBox = new google.maps.places.SearchBox(_self.apps[i].input);
+            _self.apps[i].map.controls[google.maps.ControlPosition.TOP_LEFT].push(_self.apps[i].input);
+            
+            // Bias the SearchBox results towards current map's viewport.
+            switch(i) {
+                case 0:
+                    _self.apps[i].map.addListener('bounds_changed', function() {
+                    window.apps[0].searchBox.setBounds(window.apps[0].map.getBounds());
+                    }); // end of 'bounds_changed' listener
+                    break;
+                case 1:
+                    _self.apps[i].map.addListener('bounds_changed', function() {
+                    window.apps[1].searchBox.setBounds(window.apps[1].map.getBounds());
+                    }); // end of 'bounds_changed' listener
+                    break;
+                default:                    
             }
-            var icon = {
-              url: place.icon,
-              size: new google.maps.Size(71, 71),
-              origin: new google.maps.Point(0, 0),
-              anchor: new google.maps.Point(17, 34),
-              scaledSize: new google.maps.Size(25, 25)
-            };
 
-            // Create a marker for each place.
-            appOne.markers.push(new google.maps.Marker({
-              map: appOne.map,
-              icon: icon,
-              title: place.name,
-              position: place.geometry.location
-            }));
+            _self.apps[i].markers = [];
+            // Listen for the event fired when the user selects a prediction and retrieve
+            // more details for that place.
+            switch(i) {
+                case 0:
+                    _self.apps[i].searchBox.addListener('places_changed', function() {
+                        var places = window.apps[0].searchBox.getPlaces();
 
-            if (place.geometry.viewport) {
-              // Only geocodes have viewport.
-              appOne.bounds.union(place.geometry.viewport);
-            } else {
-              appOne.bounds.extend(place.geometry.location);
-            }
-          });
-          appOne.map.fitBounds(appOne.bounds);
-        });
+                        if (places.length == 0) {
+                            return;
+                        }
 
-        appTwo.searchBox.addListener('places_changed', function() {
-          var places = appTwo.searchBox.getPlaces();
+                        // Clear out the old markers.
+                        window.apps[0].markers.forEach(function(marker) {
+                            marker.setMap(null);
+                        });
+                        window.apps[0].markers = [];
 
-          if (places.length == 0) {
-            return;
-          }
+                        // For each place, get the icon, name and location.
+                        window.apps[0].bounds = new google.maps.LatLngBounds();
+                        places.forEach(function(place) {
+                            if (!place.geometry) {
+                            console.log("Returned place contains no geometry");
+                            return;
+                            }
+                            var icon = {
+                            url: place.icon,
+                            size: new google.maps.Size(71, 71),
+                            origin: new google.maps.Point(0, 0),
+                            anchor: new google.maps.Point(17, 34),
+                            scaledSize: new google.maps.Size(25, 25)
+                            };
 
-          // Clear out the old markers.
-          appTwo.markers.forEach(function(marker) {
-            marker.setMap(null);
-          });
-          appTwo.markers = [];
+                            // Create a marker for each place.
+                            window.apps[0].markers.push(new google.maps.Marker({
+                            map: window.apps[0].map,
+                            icon: icon,
+                            title: place.name,
+                            position: place.geometry.location
+                            }));
 
-          // For each place, get the icon, name and location.
-          appTwo.bounds = new google.maps.LatLngBounds();
-          places.forEach(function(place) {
-            if (!place.geometry) {
-              console.log("Returned place contains no geometry");
-              return;
-            }
-            var icon = {
-              url: place.icon,
-              size: new google.maps.Size(71, 71),
-              origin: new google.maps.Point(0, 0),
-              anchor: new google.maps.Point(17, 34),
-              scaledSize: new google.maps.Size(25, 25)
-            };
+                            if (place.geometry.viewport) {
+                            // Only geocodes have viewport.
+                            window.apps[0].bounds.union(place.geometry.viewport);
+                            } else {
+                            window.apps[0].bounds.extend(place.geometry.location);
+                            }
+                        });
+                        window.apps[0].map.fitBounds(window.apps[0].bounds);
+                    }); // end of 'places_changed' listener
+                    break;
+                case 1:
+                    _self.apps[i].searchBox.addListener('places_changed', function() {
+                        var places = window.apps[1].searchBox.getPlaces();
 
-            // Create a marker for each place.
-            appTwo.markers.push(new google.maps.Marker({
-              map: appTwo.map,
-              icon: icon,
-              title: place.name,
-              position: place.geometry.location
-            }));
+                        if (places.length == 0) {
+                            return;
+                        }
 
-            if (place.geometry.viewport) {
-              // Only geocodes have viewport.
-              appTwo.bounds.union(place.geometry.viewport);
-            } else {
-              appTwo.bounds.extend(place.geometry.location);
-            }
-          });
-          appTwo.map.fitBounds(appTwo.bounds);
-        });
+                        // Clear out the old markers.
+                        window.apps[1].markers.forEach(function(marker) {
+                            marker.setMap(null);
+                        });
+                        window.apps[1].markers = [];
 
+                        // For each place, get the icon, name and location.
+                        window.apps[1].bounds = new google.maps.LatLngBounds();
+                        places.forEach(function(place) {
+                            if (!place.geometry) {
+                            console.log("Returned place contains no geometry");
+                            return;
+                            }
+                            var icon = {
+                            url: place.icon,
+                            size: new google.maps.Size(71, 71),
+                            origin: new google.maps.Point(0, 0),
+                            anchor: new google.maps.Point(17, 34),
+                            scaledSize: new google.maps.Size(25, 25)
+                            };
+
+                            // Create a marker for each place.
+                            window.apps[1].markers.push(new google.maps.Marker({
+                            map: window.apps[1].map,
+                            icon: icon,
+                            title: place.name,
+                            position: place.geometry.location
+                            }));
+
+                            if (place.geometry.viewport) {
+                            // Only geocodes have viewport.
+                            window.apps[1].bounds.union(place.geometry.viewport);
+                            } else {
+                            window.apps[1].bounds.extend(place.geometry.location);
+                            }
+                        });
+                        window.apps[1].map.fitBounds(window.apps[1].bounds);
+                    }); // end of 'places_changed' listener
+                    break;
+                default:
+            } // end of switch
+        } // end of for loop
       }
 
     </script>
